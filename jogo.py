@@ -78,6 +78,7 @@ def confirma_jogada(indice, pos):
         else:
             VEZ = 'JOGADOR1'
 #marca as posições do tabuleiro
+espaco = 0
 marcacao_tabuleiro = [
     0, 1, 2,
     3, 4, 5,
@@ -98,6 +99,40 @@ rect9 = pygame.Rect((400, 400), (200, 200))
 #adiciona rects em lista para melhor acesso
 listaRects = [rect1, rect2, rect3, rect4, rect5, rect6, rect7, rect8, rect9]
 
+def teste_vitoria(l):
+    return ((marcacao_tabuleiro[0] == l and marcacao_tabuleiro[1] == l and marcacao_tabuleiro[2] == l) or
+        (marcacao_tabuleiro[3] == l and marcacao_tabuleiro[4] == l and marcacao_tabuleiro[5] == l) or
+        (marcacao_tabuleiro[6] == l and marcacao_tabuleiro[7] == l and marcacao_tabuleiro[8] == l) or
+        (marcacao_tabuleiro[0] == l and marcacao_tabuleiro[3] == l and marcacao_tabuleiro[6] == l) or
+        (marcacao_tabuleiro[1] == l and marcacao_tabuleiro[4] == l and marcacao_tabuleiro[7] == l) or
+        (marcacao_tabuleiro[2] == l and marcacao_tabuleiro[5] == l and marcacao_tabuleiro[8] == l) or
+        (marcacao_tabuleiro[0] == l and marcacao_tabuleiro[4] == l and marcacao_tabuleiro[8] == l) or
+        (marcacao_tabuleiro[2] == l and marcacao_tabuleiro[4] == l and marcacao_tabuleiro[6] == l))
+
+def reset():
+    global ESCOLHA, ESTADO, VEZ, marca_tabu, espaco
+    ESTADO = 'JOGANDO'
+    VEZ = 'JOGADOR1'
+    ESCOLHA = 'X'
+    espaco = 0
+    marca_tabu = [
+        0, 1, 2,
+        3, 4, 5,
+        6, 7, 8
+    ]
+    tela.fill(0)
+
+def texto_vitoria(v):
+    arial = pygame.font.SysFont('arial', 40)
+    mensagem = 'JOGADOR {} VENCEU'.format(v)
+
+    if v == 'EMPATE':
+        mens_vitoria = arial.render('DEU VELHA', True, (0, 255, 0), 0)
+        tela.blit(mens_vitoria, (115, 265))
+    else:
+        mens_vitoria = arial.render(mensagem, True, (0, 255, 0), 0)
+        tela.blit(mens_vitoria, (0, 265))
+
 
 run = True
 while run:
@@ -113,5 +148,20 @@ while run:
                 else:
                     ESCOLHA = 'O'
                     verifica_pos()
+
+                if teste_vitoria('X'):
+                    print('X VENCEU')
+                    texto_vitoria('X')
+                    ESTADO = 'RESET'
+
+                elif teste_vitoria('O'):
+                    print('O VENCEU')
+                    texto_vitoria('O')
+                    ESTADO = 'RESET'
+
+                elif espaco >= 9:
+                    print('EMPATE')
+                    texto_vitoria('EMPATE')
+                    ESTADO = 'RESET'
 
     pygame.display.update()
